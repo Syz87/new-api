@@ -5248,6 +5248,14 @@
     "Zero retention": "Zero retention",
     "Zhipu": "Zhipu",
     "Zhipu V4": "Zhipu V4",
-    "Zoom": "Zoom"
+    "Zoom": "Zoom",
+    "No commission records yet": "No commission records yet",
+    "Commission records": "Commission records",
+    "Referral rewards and commission records": "Referral rewards and commission records",
+    "No rewards available to transfer": "No rewards available to transfer",
+    "Source Amount": "Source Amount",
+    "Recharge Referral Commission (%)": "Recharge Referral Commission (%)",
+    "Percentage of credited Epay quota awarded to the inviter. Set 0 to disable.": "Percentage of credited Epay quota awarded to the inviter. Set 0 to disable.",
+    "No invited users yet": "No invited users yet"
   }
 }

@@ -124,6 +124,7 @@ var TelegramBotName = ""
 var QuotaForNewUser = 0
 var QuotaForInviter = 0
 var QuotaForInvitee = 0
+var ReferralCommissionRateBps = 0 // 充值返佣比例，单位基点(0-10000)，0=关闭，1000=10%
 var ChannelDisableThreshold = 5.0
 var AutomaticDisableChannelEnabled = false
 var AutomaticEnableChannelEnabled = false

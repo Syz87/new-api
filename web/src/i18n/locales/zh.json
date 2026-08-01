@@ -5248,6 +5248,14 @@
     "Zero retention": "零数据保留",
     "Zhipu": "智谱",
     "Zhipu V4": "智谱 V4",
-    "Zoom": "缩放"
+    "Zoom": "缩放",
+    "No commission records yet": "暂无佣金记录",
+    "Commission records": "佣金记录",
+    "Referral rewards and commission records": "推荐奖励和佣金记录",
+    "No rewards available to transfer": "暂无奖励可转移",
+    "Source Amount": "来源额度",
+    "Recharge Referral Commission (%)": "充值返佣比例 (%)",
+    "Percentage of credited Epay quota awarded to the inviter. Set 0 to disable.": "充值到账额度中按比例返给邀请人。设为 0 关闭。",
+    "No invited users yet": "暂无邀请用户"
   }
 }

@@ -405,6 +405,9 @@ func EpayNotify(c *gin.Context) {
 			}
 			logger.LogInfo(c.Request.Context(), fmt.Sprintf("易支付 充值成功 trade_no=%s user_id=%d client_ip=%s quota_to_add=%d money=%.2f topup=%q", topUp.TradeNo, topUp.UserId, c.ClientIP(), quotaToAdd, topUp.Money, common.GetJsonString(topUp)))
 			model.RecordTopupLog(topUp.UserId, fmt.Sprintf("使用在线充值成功，充值金额: %v，支付金额：%f", logger.LogQuota(quotaToAdd), topUp.Money), c.ClientIP(), topUp.PaymentMethod, "epay")
+			// 充值返佣：好友充值时按比例给邀请人返佣。只在 Epay 渠道触发，
+			// 失败只记录日志，不阻断已成功的充值主流程。
+			awardReferralCommission(c, topUp, quotaToAdd)
 		}
 	} else {
 		logger.LogInfo(c.Request.Context(), fmt.Sprintf("易支付 webhook 忽略事件 trade_no=%s callback_type=%s trade_status=%s client_ip=%s verify_info=%q", verifyInfo.ServiceTradeNo, verifyInfo.Type, verifyInfo.TradeStatus, c.ClientIP(), common.GetJsonString(verifyInfo)))
@@ -508,4 +511,38 @@ func AdminCompleteTopUp(c *gin.Context) {
 		return
 	}
 	common.ApiSuccess(c, nil)
+}
+
+// awardReferralCommission credits the inviter a fraction of the recharge quota.
+// Guarded by ReferralCommissionRateBps and payment compliance confirmation.
+// Any error is logged only — it must never roll back an already-succeeded top-up.
+func awardReferralCommission(c *gin.Context, topUp *model.TopUp, quotaToAdd int) {
+	if common.ReferralCommissionRateBps <= 0 || !isPaymentComplianceConfirmed() {
+		return
+	}
+	user, err := model.GetUserById(topUp.UserId, false)
+	if err != nil || user == nil || user.InviterId <= 0 {
+		return
+	}
+	// int64 intermediate to avoid any chance of int32 overflow before division.
+	commissionQuota := int(int64(quotaToAdd) * int64(common.ReferralCommissionRateBps) / 10000)
+	if commissionQuota <= 0 {
+		return
+	}
+	if err := model.IncreaseInviterAffQuota(user.InviterId, commissionQuota); err != nil {
+		logger.LogError(c.Request.Context(), fmt.Sprintf("易支付 返佣失败 trade_no=%s inviter=%d invitee=%d commission=%d rate=%d bps error=%q", topUp.TradeNo, user.InviterId, topUp.UserId, commissionQuota, common.ReferralCommissionRateBps, err.Error()))
+		return
+	}
+	referralLog := &model.ReferralLog{
+		InviterId:    user.InviterId,
+		InviteeId:    topUp.UserId,
+		Amount:       commissionQuota,
+		SourceAmount: quotaToAdd,
+		TradeNo:      topUp.TradeNo,
+	}
+	if err := model.CreateReferralLog(referralLog); err != nil {
+		logger.LogError(c.Request.Context(), fmt.Sprintf("易支付 记录返佣日志失败 trade_no=%s inviter=%d invitee=%d commission=%d error=%q", topUp.TradeNo, user.InviterId, topUp.UserId, commissionQuota, err.Error()))
+		return
+	}
+	logger.LogInfo(c.Request.Context(), fmt.Sprintf("易支付 充值返佣 trade_no=%s inviter=%d invitee=%d commission=%d source=%d rate=%d bps", topUp.TradeNo, user.InviterId, topUp.UserId, commissionQuota, quotaToAdd, common.ReferralCommissionRateBps))
 }

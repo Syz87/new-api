@@ -55,6 +55,7 @@ const quotaSchema = z.object({
   PreConsumedQuota: z.coerce.number().min(0),
   QuotaForInviter: z.coerce.number().min(0),
   QuotaForInvitee: z.coerce.number().min(0),
+  ReferralCommissionRateBps: z.coerce.number().min(0).max(10000),
   TopUpLink: z.string(),
   general_setting: z.object({
     docs_link: z.string(),
@@ -231,6 +232,45 @@ export function QuotaSettingsSection({
                     {t('Quota given to invited users ({{formattedQuota}})', {
                       formattedQuota: formatQuotaInputValue(field.value),
                     })}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='ReferralCommissionRateBps'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('Recharge Referral Commission (%)')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type='number'
+                      min={0}
+                      max={100}
+                      step={0.1}
+                      value={
+                        field.value
+                          ? (field.value as number) / 100
+                          : 0
+                      }
+                      onChange={(event) => {
+                        const value = event.currentTarget.valueAsNumber
+                        const bps = Number.isNaN(value)
+                          ? 0
+                          : Math.floor(value * 100)
+                        field.onChange(bps)
+                      }}
+                      name={field.name}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {t(
+                      'Percentage of credited Epay quota awarded to the inviter. Set 0 to disable.'
+                    )}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
