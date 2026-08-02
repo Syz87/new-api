@@ -32,6 +32,7 @@ interface OverviewCardProps {
   historyRewards: number
   affCount: number
   affiliateLink: string
+  commissionRateBps: number
   onTransfer: () => void
   complianceConfirmed?: boolean
   loading?: boolean
@@ -42,6 +43,7 @@ export function OverviewCard({
   historyRewards,
   affCount,
   affiliateLink,
+  commissionRateBps,
   onTransfer,
   complianceConfirmed = true,
   loading,
@@ -75,6 +77,11 @@ export function OverviewCard({
           <div className='min-w-0'>
             <h3 className='truncate text-sm font-semibold'>
               {t('Referral Program')}
+              {commissionRateBps > 0 ? (
+                <span className='text-primary ml-1.5 inline-flex items-center rounded bg-primary/10 px-1.5 py-px text-[11px] font-medium'>
+                  {commissionRateBps / 100}%
+                </span>
+              ) : null}
             </h3>
             <p className='text-muted-foreground line-clamp-1 text-xs'>
               {t('Share your link and earn rewards')}

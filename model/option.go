@@ -132,6 +132,9 @@ func InitOptionMap() {
 	common.OptionMap["TurnstileSiteKey"] = ""
 	common.OptionMap["TurnstileSecretKey"] = ""
 	common.OptionMap["QuotaForNewUser"] = strconv.Itoa(common.QuotaForNewUser)
+	common.OptionMap["DefaultUserGroup"] = common.DefaultUserGroup
+	common.OptionMap["HideTokenGroupSelector"] = strconv.FormatBool(common.HideTokenGroupSelector)
+	common.OptionMap["GroupUnlockRules"] = common.GroupUnlockRules
 	common.OptionMap["QuotaForInviter"] = strconv.Itoa(common.QuotaForInviter)
 	common.OptionMap["QuotaForInvitee"] = strconv.Itoa(common.QuotaForInvitee)
 	common.OptionMap["ReferralCommissionRateBps"] = strconv.Itoa(common.ReferralCommissionRateBps)
@@ -530,6 +533,12 @@ func updateOptionMap(key string, value string) (err error) {
 		common.TurnstileSecretKey = value
 	case "QuotaForNewUser":
 		common.QuotaForNewUser, _ = strconv.Atoi(value)
+	case "DefaultUserGroup":
+		common.DefaultUserGroup = value
+	case "HideTokenGroupSelector":
+		common.HideTokenGroupSelector, _ = strconv.ParseBool(value)
+	case "GroupUnlockRules":
+		common.GroupUnlockRules = value
 	case "QuotaForInviter":
 		common.QuotaForInviter, _ = strconv.Atoi(value)
 	case "QuotaForInvitee":

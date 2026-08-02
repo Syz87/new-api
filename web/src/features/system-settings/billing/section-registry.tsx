@@ -42,6 +42,7 @@ const getModelDefaults = (settings: BillingSettings) => ({
 
 const getGroupDefaults = (settings: BillingSettings) => ({
   TopupGroupRatio: settings.TopupGroupRatio,
+  GroupUnlockRules: settings.GroupUnlockRules,
   GroupRatio: settings.GroupRatio,
   UserUsableGroups: settings.UserUsableGroups,
   GroupGroupRatio: settings.GroupGroupRatio,
@@ -65,6 +66,7 @@ const BILLING_SECTIONS = [
           QuotaForInvitee: settings.QuotaForInvitee,
           ReferralCommissionRateBps: settings.ReferralCommissionRateBps,
           TopUpLink: settings.TopUpLink,
+          DefaultUserGroup: settings.DefaultUserGroup,
           general_setting: {
             docs_link: settings['general_setting.docs_link'],
           },

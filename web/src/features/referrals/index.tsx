@@ -83,6 +83,7 @@ export function Referrals() {
               historyRewards={data?.history_rewards ?? 0}
               affCount={data?.aff_count ?? 0}
               affiliateLink={affiliateLink}
+              commissionRateBps={data?.commission_rate_bps ?? 0}
               onTransfer={handleOpenTransfer}
               complianceConfirmed={complianceConfirmed}
               loading={loading || affiliateLoading}

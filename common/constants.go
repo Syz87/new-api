@@ -122,6 +122,9 @@ var TelegramBotToken = ""
 var TelegramBotName = ""
 
 var QuotaForNewUser = 0
+var DefaultUserGroup = "default" // 新用户默认分组，仅对注册生效，不影响已有用户
+var HideTokenGroupSelector = false // 开启后普通用户创建Key时隐藏分组选择，强制用auto
+var GroupUnlockRules = "{}"         // 充值解锁分组规则，JSON: {"vip":100,"svip":500}，分组名→累计充值金额(元)
 var QuotaForInviter = 0
 var QuotaForInvitee = 0
 var ReferralCommissionRateBps = 0 // 充值返佣比例，单位基点(0-10000)，0=关闭，1000=10%

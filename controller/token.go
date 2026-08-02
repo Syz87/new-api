@@ -269,6 +269,10 @@ func AddToken(c *gin.Context) {
 		return
 	}
 	token := request.Token
+	// 若管理员启用了"隐藏分组选项"且当前用户为非管理员，强制 token 使用 auto 分组
+	if common.HideTokenGroupSelector && c.GetInt("role") != common.RoleAdminUser {
+		token.Group = "auto"
+	}
 	if len(token.Name) > 50 {
 		common.ApiErrorI18n(c, i18n.MsgTokenNameTooLong)
 		return

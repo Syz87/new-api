@@ -253,6 +253,7 @@ export type BillingSettings = {
   QuotaForInvitee: number
   ReferralCommissionRateBps: number
   TopUpLink: string
+  DefaultUserGroup: string
   'general_setting.docs_link': string
   'quota_setting.enable_free_model_pre_consume': boolean
   QuotaPerUnit: number
@@ -275,6 +276,7 @@ export type BillingSettings = {
   'billing_setting.billing_expr': string
   'tool_price_setting.prices': string
   TopupGroupRatio: string
+  GroupUnlockRules: string
   GroupRatio: string
   UserUsableGroups: string
   GroupGroupRatio: string

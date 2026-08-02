@@ -111,6 +111,7 @@ export function ApiKeysMutateDrawer({
     null
   )
   const defaultUseAutoGroup = status?.default_use_auto_group === true
+  const hideTokenGroupSelector = status?.hide_token_group_selector === true
 
   // Fetch models
   const { data: modelsData } = useQuery({
@@ -412,6 +413,7 @@ export function ApiKeysMutateDrawer({
                 )}
               />
 
+              {!hideTokenGroupSelector ? (
               <FormField
                 control={form.control}
                 name='group'
@@ -441,6 +443,7 @@ export function ApiKeysMutateDrawer({
                   </FormItem>
                 )}
               />
+              ) : null}
 
               {selectedGroup === 'auto' && (
                 <FormField

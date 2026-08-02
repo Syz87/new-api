@@ -101,6 +101,7 @@ type User struct {
 	AffQuota         int                        `json:"aff_quota" gorm:"type:int;default:0;column:aff_quota"`           // 邀请剩余额度
 	AffHistoryQuota  int                        `json:"aff_history_quota" gorm:"type:int;default:0;column:aff_history"` // 邀请历史额度
 	InviterId        int                        `json:"inviter_id" gorm:"type:int;column:inviter_id;index"`
+	TotalTopupAmount float64                    `json:"total_topup_amount" gorm:"type:decimal(12,2);default:0"` // 累计充值金额(元)，用于分组解锁判断
 	DeletedAt        gorm.DeletedAt             `gorm:"index"`
 	LinuxDOId        string                     `json:"linux_do_id" gorm:"column:linux_do_id;index"`
 	Setting          string                     `json:"setting" gorm:"type:text;column:setting"`
@@ -589,6 +590,9 @@ func ensureEmailAvailableWithTx(tx *gorm.DB, email string, excludeUserID int) er
 }
 
 func (user *User) Insert(inviterId int) error {
+	if user.Group == "" {
+		user.Group = common.DefaultUserGroup
+	}
 	if err := DB.Transaction(func(tx *gorm.DB) error {
 		return withNormalizedEmailLock(tx, user.Email, func(tx *gorm.DB) error {
 			if err := user.prepareForInsert(tx); err != nil {
@@ -654,6 +658,9 @@ func (user *User) FinishInsert(inviterId int) {
 // This is used for OAuth registration where user creation and binding need to be atomic.
 // Post-creation tasks (sidebar config, logs, inviter rewards) are handled after the transaction commits.
 func (user *User) InsertWithTx(tx *gorm.DB, inviterId int) error {
+	if user.Group == "" {
+		user.Group = common.DefaultUserGroup
+	}
 	return withNormalizedEmailLock(tx, user.Email, func(tx *gorm.DB) error {
 		if err := user.prepareForInsert(tx); err != nil {
 			return err
@@ -1417,4 +1424,54 @@ func RootUserExists() bool {
 		return false
 	}
 	return true
+}
+
+// AwardGroupUnlock accumulates topup amount and upgrades the user's group if
+// any unlock threshold is met. Safe for concurrent topups (row lock on MySQL/PG).
+func AwardGroupUnlock(userId int, money float64) error {
+	rulesJSON := common.GroupUnlockRules
+	if rulesJSON == "" || rulesJSON == "{}" {
+		return nil
+	}
+	var rules map[string]float64
+	if err := common.Unmarshal([]byte(rulesJSON), &rules); err != nil {
+		logger.LogError(nil, fmt.Sprintf("GroupUnlockRules JSON parse error: %v", err))
+		return err
+	}
+	if len(rules) == 0 {
+		return nil
+	}
+
+	return DB.Transaction(func(tx *gorm.DB) error {
+		var user User
+		if err := lockForUpdate(tx).First(&user, userId).Error; err != nil {
+			return err
+		}
+
+		user.TotalTopupAmount += money
+
+		var bestGroup string
+		var bestThreshold float64
+		for group, threshold := range rules {
+			if group == user.Group {
+				continue
+			}
+			if user.TotalTopupAmount >= threshold && threshold > bestThreshold {
+				bestGroup = group
+				bestThreshold = threshold
+			}
+		}
+		if bestGroup == "" {
+			return tx.Save(&user).Error
+		}
+
+		oldGroup := user.Group
+		user.Group = bestGroup
+		if err := tx.Save(&user).Error; err != nil {
+			return err
+		}
+		logger.LogInfo(nil, fmt.Sprintf("充值解锁分组 user=%d old_group=%s new_group=%s total=%.2f threshold=%.2f",
+			userId, oldGroup, bestGroup, user.TotalTopupAmount, bestThreshold))
+		return nil
+	})
 }

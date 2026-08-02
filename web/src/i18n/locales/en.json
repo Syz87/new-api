@@ -5255,7 +5255,8 @@
     "No rewards available to transfer": "No rewards available to transfer",
     "Source Amount": "Source Amount",
     "Recharge Referral Commission (%)": "Recharge Referral Commission (%)",
-    "Percentage of credited Epay quota awarded to the inviter. Set 0 to disable.": "Percentage of credited Epay quota awarded to the inviter. Set 0 to disable.",
+    "Default User Group": "Default User Group",
+    "Group assigned to newly registered users. Must exist in Group Ratio settings.": "Group assigned to newly registered users. Must exist in Group Ratio settings.",    "Percentage of credited Epay quota awarded to the inviter. Set 0 to disable.": "Percentage of credited Epay quota awarded to the inviter. Set 0 to disable.",
     "No invited users yet": "No invited users yet"
   }
 }

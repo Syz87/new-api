@@ -408,6 +408,8 @@ func EpayNotify(c *gin.Context) {
 			// 充值返佣：好友充值时按比例给邀请人返佣。只在 Epay 渠道触发，
 			// 失败只记录日志，不阻断已成功的充值主流程。
 			awardReferralCommission(c, topUp, quotaToAdd)
+			// 充值解锁分组：累计充值金额达标后自动升级用户分组。非阻断路径。
+			_ = model.AwardGroupUnlock(topUp.UserId, topUp.Money)
 		}
 	} else {
 		logger.LogInfo(c.Request.Context(), fmt.Sprintf("易支付 webhook 忽略事件 trade_no=%s callback_type=%s trade_status=%s client_ip=%s verify_info=%q", verifyInfo.ServiceTradeNo, verifyInfo.Type, verifyInfo.TradeStatus, c.ClientIP(), common.GetJsonString(verifyInfo)))

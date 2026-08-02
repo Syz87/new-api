@@ -56,5 +56,6 @@ export interface ReferralInfo {
   inviter: ReferralInviter | null
   commission_logs: CommissionLog[]
   commission_total: number
+  commission_rate_bps: number
   stats: ReferralStats
 }

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/model"
 	"github.com/gin-gonic/gin"
 )
@@ -60,8 +61,9 @@ func GetReferralInfo(c *gin.Context) {
 			"aff_code":         user.AffCode,         // 邀请码
 			"aff_count":        user.AffCount,        // 邀请人数
 			"inviter":          inviterInfo,          // 邀请人（无则为 null）
-			"commission_logs":  logs,                 // 佣金记录
-			"commission_total": total,                // 记录总数（用于分页）
+			"commission_logs":  logs,                           // 佣金记录
+			"commission_total": total,                          // 记录总数（用于分页）
+			"commission_rate_bps": common.ReferralCommissionRateBps, // 当前返佣比例(基点)
 			"stats":            stats,                // 统计：累计返佣/记录数/已邀请用户列表
 		},
 	})

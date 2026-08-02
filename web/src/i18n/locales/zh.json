@@ -5255,7 +5255,8 @@
     "No rewards available to transfer": "暂无奖励可转移",
     "Source Amount": "来源额度",
     "Recharge Referral Commission (%)": "充值返佣比例 (%)",
-    "Percentage of credited Epay quota awarded to the inviter. Set 0 to disable.": "充值到账额度中按比例返给邀请人。设为 0 关闭。",
+    "Default User Group": "新用户默认分组",
+    "Group assigned to newly registered users. Must exist in Group Ratio settings.": "新注册用户的默认分组，须在分组比例设置中存在。",    "Percentage of credited Epay quota awarded to the inviter. Set 0 to disable.": "充值到账额度中按比例返给邀请人。设为 0 关闭。",
     "No invited users yet": "暂无邀请用户"
   }
 }
