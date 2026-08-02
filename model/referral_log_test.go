@@ -47,6 +47,9 @@ func TestGetReferralLogsByInviterIdPaginatesAndOrders(t *testing.T) {
 	setupReferralTest(t)
 
 	// 3 logs for inviter 1, 1 log for inviter 2 (must be excluded).
+	// Explicit ascending CreatedAt so ORDER BY created_at DESC is deterministic
+	// (time.Now().Unix() would collide within the same second).
+	baseTs := int64(1700000000)
 	for i, amt := range []int{10, 20, 30} {
 		require.NoError(t, CreateReferralLog(&ReferralLog{
 			InviterId:    1,
@@ -54,9 +57,10 @@ func TestGetReferralLogsByInviterIdPaginatesAndOrders(t *testing.T) {
 			Amount:       amt,
 			SourceAmount: amt * 10,
 			TradeNo:      "trade-" + string(rune('a'+i)),
+			CreatedAt:    baseTs + int64(i),
 		}))
 	}
-	require.NoError(t, CreateReferralLog(&ReferralLog{InviterId: 2, InviteeId: 200, Amount: 99, SourceAmount: 999, TradeNo: "other"}))
+	require.NoError(t, CreateReferralLog(&ReferralLog{InviterId: 2, InviteeId: 200, Amount: 99, SourceAmount: 999, TradeNo: "other", CreatedAt: baseTs}))
 
 	// Page 1 (size 2): newest two of inviter 1 -> amounts 30, 20.
 	logs, total, err := GetReferralLogsByInviterId(1, 1, 2)
