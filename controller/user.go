@@ -261,6 +261,9 @@ func Register(c *gin.Context) {
 		return
 	}
 	affCode := user.AffCode // this code is the inviter's code, not the user's own code
+	if affCode == "" {
+		affCode = c.Query("aff") // fallback: read from URL query parameter
+	}
 	inviterId, _ := model.GetUserIdByAffCode(affCode)
 	cleanUser := model.User{
 		Username:    user.Username,
