@@ -67,6 +67,7 @@ import { GroupSpecialUsableRulesEditor } from './group-special-usable-editor'
 type GroupFormValues = {
   GroupRatio: string
   TopupGroupRatio: string
+  GroupUnlockRules: string
   UserUsableGroups: string
   GroupGroupRatio: string
   AutoGroups: string
@@ -285,6 +286,33 @@ export const GroupRatioForm = memo(function GroupRatioForm({
                       'Optional multiplier per user group used when calculating recharge pricing. Provide a JSON object such as'
                     )}
                     {` { "default": 1, "vip": 1.2 }`}.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='GroupUnlockRules'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('Group unlock rules')}</FormLabel>
+                  <FormControl>
+                    <JsonCodeEditor
+                      value={field.value}
+                      onChange={field.onChange}
+                      name={field.name}
+                      onBlur={field.onBlur}
+                      textareaRef={field.ref}
+                      heightClassName='h-32 min-h-32 max-h-32'
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {t(
+                      'JSON map of group → cumulative topup amount (CNY) required to unlock. Once a user reaches the threshold, their group is automatically upgraded. Eg.'
+                    )}
+                    {` { "vip": 100, "svip": 500 }`}.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
