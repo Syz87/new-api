@@ -119,6 +119,8 @@ func GetTopUpInfo(c *gin.Context) {
 		"amount_options":          operation_setting.GetPaymentSetting().AmountOptions,
 		"discount":                operation_setting.GetPaymentSetting().AmountDiscount,
 		"topup_link":              common.TopUpLink,
+		"quota_for_inviter":       common.QuotaForInviter,
+		"quota_for_invitee":       common.QuotaForInvitee,
 	}
 	common.ApiSuccess(c, data)
 }

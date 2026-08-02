@@ -136,6 +136,10 @@ export interface TopupInfo {
   discount: Record<number, number>
   /** Optional topup link for purchasing codes */
   topup_link?: string
+  /** Quota awarded to the inviter per successful referral */
+  quota_for_inviter?: number
+  /** Quota awarded to the invited user upon registration */
+  quota_for_invitee?: number
   /** Whether Creem topup is enabled */
   enable_creem_topup?: boolean
   /** Available Creem products */

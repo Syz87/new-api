@@ -346,6 +346,8 @@ export function Wallet(props: WalletProps) {
               complianceConfirmed={
                 topupInfo?.payment_compliance_confirmed !== false
               }
+              quotaForInviter={topupInfo?.quota_for_inviter}
+              quotaForInvitee={topupInfo?.quota_for_invitee}
               loading={affiliateLoading}
             />
           </div>
