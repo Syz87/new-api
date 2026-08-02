@@ -1,0 +1,32 @@
+# new-api 定制版（充值返佣）独立部署
+# 与原版 new-api（端口 6578）完全隔离：独立端口、独立 SQLite 数据、独立容器名。
+# 部署目录：/home/app/new-api-custom
+#
+# 用法：
+#   1. 把构建好的镜像加载到服务器：docker load -i new-api-custom.tar
+#   2. 在本目录执行：docker compose up -d
+#   3. 访问：http://192.168.6.108:6579
+
+services:
+  new-api-custom:
+    image: new-api-custom:referral
+    container_name: new-api-custom
+    restart: always
+    command: --log-dir /app/logs
+    ports:
+      # 宿主机 6579 -> 容器 3000；0.0.0.0 表示不限制访问 IP
+      - "0.0.0.0:6579:3000"
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+    environment:
+      # 使用 SQLite（数据落在 /data/one-api.db），零外部依赖，与原版数据库隔离
+      - TZ=Asia/Shanghai
+      - ERROR_LOG_ENABLED=true
+      - BATCH_UPDATE_ENABLED=true
+      - NODE_NAME=new-api-custom-1
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
