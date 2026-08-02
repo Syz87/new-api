@@ -276,7 +276,6 @@ export type BillingSettings = {
   'billing_setting.billing_expr': string
   'tool_price_setting.prices': string
   TopupGroupRatio: string
-  GroupUnlockRules: string
   GroupRatio: string
   UserUsableGroups: string
   GroupGroupRatio: string
